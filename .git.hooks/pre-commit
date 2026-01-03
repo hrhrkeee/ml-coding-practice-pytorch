@@ -5,7 +5,7 @@ set -euo pipefail
 # 設定
 # ---------------------------------------------
 PYPROJECT="pyproject.toml"
-OUTPUT="requires.txt"
+OUTPUT="requirements.txt"
 
 # ---------------------------------------------
 # pyproject.toml が staged されているか？
