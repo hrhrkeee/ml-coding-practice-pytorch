@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ---------------------------------------------
+# 設定
+# ---------------------------------------------
+PYPROJECT="pyproject.toml"
+OUTPUT="requires.txt"
+
+# ---------------------------------------------
+# pyproject.toml が staged されているか？
+# ---------------------------------------------
+if ! git diff --cached --name-only | grep -qx "$PYPROJECT"; then
+    # 変更されていなければ何もしない
+    exit 0
+fi
+
+echo "[pre-commit] Detected change in $PYPROJECT"
+
+# ---------------------------------------------
+# uv の存在確認
+# ---------------------------------------------
+if ! command -v uv >/dev/null 2>&1; then
+    echo "[pre-commit] WARNING: uv not found. Skipping $OUTPUT generation."
+    exit 0
+fi
+
+# ---------------------------------------------
+# requires.txt 生成
+# ---------------------------------------------
+echo "[pre-commit] Regenerating $OUTPUT ..."
+
+uv pip compile "$PYPROJECT" -o "$OUTPUT"
+
+# ---------------------------------------------
+# 差分があれば stage に追加
+# ---------------------------------------------
+if ! git diff --quiet "$OUTPUT"; then
+    git add "$OUTPUT"
+    echo "[pre-commit] $OUTPUT updated and staged."
+else
+    echo "[pre-commit] $OUTPUT unchanged."
+fi
+
+exit 0
