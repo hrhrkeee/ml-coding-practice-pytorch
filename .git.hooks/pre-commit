@@ -69,10 +69,14 @@ strip_notebook_outputs() {
     # nbstripout を実行
     uv run nbstripout $notebooks
 
-    # 変更内容を再ステージ
-    git add $notebooks
-
-    echo "[pre-commit] Notebook outputs stripped successfully."
+    # 差分があればコミットを中断
+    if ! git diff --quiet $notebooks; then
+        echo "[pre-commit] Notebook outputs have been stripped."
+        echo "[pre-commit] コミットを中止しました。ノートブックの変更を確認してからもう一度コミットしてください。"
+        exit 1
+    else
+        echo "[pre-commit] Notebook outputs were already clean."
+    fi
 }
 
 # =============================================================================
