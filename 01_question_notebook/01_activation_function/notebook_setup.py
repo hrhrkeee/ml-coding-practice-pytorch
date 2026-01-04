@@ -24,3 +24,28 @@ except ImportError as e:
     # ダミー関数を定義してエラーを防ぐ
     def run_test(*args, **kwargs):
         print("Error: run_test is not available because setup failed.")
+
+
+def test(test_module_name: str, filter_name: str = None):
+    """
+    関数をテストするためのデコレータ
+    
+    Parameters
+    ----------
+    test_module_name : str
+        テストモジュール名（例: "01_activation_function.test_01_sigmoid"）
+    filter_name : str, optional
+        実行するテスト関数名を絞り込むための文字列
+    
+    Examples
+    --------
+    @test("01_activation_function.test_01_sigmoid", filter_name="forward")
+    def sigmoid_forward(x: np.ndarray) -> np.ndarray:
+        ...
+    """
+    def decorator(func):
+        # テストを実行
+        run_test(test_module_name, filter_name=filter_name, **{func.__name__: func})
+        # 元の関数をそのまま返す
+        return func
+    return decorator

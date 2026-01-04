@@ -1,46 +1,95 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# ---------------------------------------------
-# 設定
-# ---------------------------------------------
-PYPROJECT="pyproject.toml"
-OUTPUT="requirements.txt"
+# =============================================================================
+# ユーティリティ関数
+# =============================================================================
 
-# ---------------------------------------------
-# pyproject.toml が staged されているか？
-# ---------------------------------------------
-if ! git diff --cached --name-only | grep -qx "$PYPROJECT"; then
-    # 変更されていなければ何もしない
+# uv コマンドの存在確認
+check_uv_installed() {
+    if ! command -v uv >/dev/null 2>&1; then
+        echo "[pre-commit] ERROR: uv not found. Please install uv."
+        echo "[pre-commit] Visit: https://docs.astral.sh/uv/"
+        exit 1
+    fi
+}
+
+# ステージされたファイルを取得
+get_staged_files() {
+    local pattern="$1"
+    git diff --cached --name-only --diff-filter=ACM | grep "$pattern" || true
+}
+
+# =============================================================================
+# 機能1: requirements.txt の自動生成
+# =============================================================================
+
+update_requirements() {
+    local PYPROJECT="pyproject.toml"
+    local OUTPUT="requirements.txt"
+
+    # pyproject.toml が staged されているかチェック
+    if ! git diff --cached --name-only | grep -qx "$PYPROJECT"; then
+        return 0
+    fi
+
+    echo "[pre-commit] Detected change in $PYPROJECT"
+    echo "[pre-commit] Regenerating $OUTPUT ..."
+
+    # requirements.txt を生成
+    uv pip compile "$PYPROJECT" -o "$OUTPUT" --no-annotate
+
+    # 差分があればコミットを中断
+    if ! git diff --quiet "$OUTPUT"; then
+        echo "[pre-commit] $OUTPUT has been updated."
+        echo "[pre-commit] コミットを中止しました。$OUTPUT の変更を確認してからもう一度コミットしてください。"
+        exit 1
+    else
+        echo "[pre-commit] $OUTPUT is unchanged."
+    fi
+}
+
+# =============================================================================
+# 機能2: Notebook 出力のストリップ
+# =============================================================================
+
+strip_notebook_outputs() {
+    # ステージされた .ipynb ファイルを取得
+    local notebooks
+    notebooks=$(get_staged_files '\.ipynb$')
+
+    # 対象ファイルがなければスキップ
+    if [ -z "$notebooks" ]; then
+        return 0
+    fi
+
+    echo "[pre-commit] Stripping notebook outputs:"
+    echo "$notebooks"
+
+    # nbstripout を実行
+    uv run nbstripout $notebooks
+
+    # 変更内容を再ステージ
+    git add $notebooks
+
+    echo "[pre-commit] Notebook outputs stripped successfully."
+}
+
+# =============================================================================
+# メイン処理
+# =============================================================================
+
+main() {
+    # uv の存在確認
+    check_uv_installed
+
+    # 各機能を実行
+    update_requirements
+    strip_notebook_outputs
+
+    echo "[pre-commit] All checks passed."
     exit 0
-fi
+}
 
-echo "[pre-commit] Detected change in $PYPROJECT"
-
-# ---------------------------------------------
-# uv の存在確認
-# ---------------------------------------------
-if ! command -v uv >/dev/null 2>&1; then
-    echo "[pre-commit] WARNING: uv not found. Skipping $OUTPUT generation."
-    exit 0
-fi
-
-# ---------------------------------------------
-# requires.txt 生成
-# ---------------------------------------------
-echo "[pre-commit] Regenerating $OUTPUT ..."
-
-uv pip compile "$PYPROJECT" -o "$OUTPUT" --no-annotate
-
-# ---------------------------------------------
-# 差分があれば stage に追加せず、コミットを中断
-# ---------------------------------------------
-if ! git diff --quiet "$OUTPUT"; then
-    echo "[pre-commit] $OUTPUT updated."
-    echo "[pre-commit] コミットを中止しました。$OUTPUT の変更を確認してからもう一度コミットしてください。"
-    exit 1
-else
-    echo "[pre-commit] $OUTPUT unchanged."
-fi
-
-exit 0
+# 実行
+main
