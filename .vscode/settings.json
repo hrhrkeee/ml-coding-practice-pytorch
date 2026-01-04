@@ -1,4 +1,27 @@
 {
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
   "python.terminal.activateEnvironment": true,
+  "notebook.output.textLineLimit": 70,
+  "notebook.lineNumbers": "on",
+  "jupyter.askForKernelRestart": false,
+  
+  "git.openRepositoryInParentFolders": "never",
+  "git-graph.commitDetailsView.fileView.fileTree.compactFolders": false,
+  "github.copilot.nextEditSuggestions.enabled": false,
+  
+  "explorer.compactFolders": false,
+  "editor.multiCursorModifier": "ctrlCmd",
+  
+  "terminal.integrated.defaultProfile.windows": "Command Prompt",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.colorCustomizations": {
+    "terminal.background": "#000000"
+  },
+
+  "files.exclude": {
+    "**/.DS_Store": false,
+    "**/.git": false,
+    "**/.hg": false,
+    "**/Thumbs.db": false
+  },
 }

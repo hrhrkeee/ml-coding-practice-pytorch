@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "mhutchie.git-graph",
+    "PKief.material-icon-theme",
+    "ionutvmi.path-autocomplete",
+    "mohsen1.prettify-json",
+    "mechatroner.rainbow-csv",
+    "oderwat.indent-rainbow",
+    "cpmcgrath.codealignment-vscode",
+    "naumovs.color-highlight",
+  ]
+}

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MSG_FILE="$1"
+TARGET="[requirements.txt修正]"
+
+# requirements.txt が staged されているか
+if git diff --cached --name-only | grep -qx "requirements.txt"; then
+    # すでに含まれていなければ追記
+    if ! grep -qx "$TARGET" "$MSG_FILE"; then
+        echo "$TARGET" >> "$MSG_FILE"
+    fi
+fi

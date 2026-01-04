@@ -30,14 +30,15 @@ fi
 # ---------------------------------------------
 echo "[pre-commit] Regenerating $OUTPUT ..."
 
-uv pip compile "$PYPROJECT" -o "$OUTPUT"
+uv pip compile "$PYPROJECT" -o "$OUTPUT" --no-annotate
 
 # ---------------------------------------------
-# 差分があれば stage に追加
+# 差分があれば stage に追加せず、コミットを中断
 # ---------------------------------------------
 if ! git diff --quiet "$OUTPUT"; then
-    git add "$OUTPUT"
-    echo "[pre-commit] $OUTPUT updated and staged."
+    echo "[pre-commit] $OUTPUT updated."
+    echo "[pre-commit] コミットを中止しました。$OUTPUT の変更を確認してからもう一度コミットしてください。"
+    exit 1
 else
     echo "[pre-commit] $OUTPUT unchanged."
 fi
