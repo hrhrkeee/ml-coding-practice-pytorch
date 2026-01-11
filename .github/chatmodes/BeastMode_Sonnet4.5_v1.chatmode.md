@@ -1,7 +1,7 @@
 ---
 description: BeastMode_Sonnet4.5_v1.md
 model: Claude Sonnet 4.5
-tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'problems', 'runInTerminal', 'runNotebooks', 'runTasks', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
+tools: ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'todo']
 ---
 
 # Beast Mode 3.1
