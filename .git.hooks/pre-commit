@@ -89,7 +89,7 @@ main() {
 
     # 各機能を実行
     update_requirements
-    strip_notebook_outputs
+    # strip_notebook_outputs
 
     echo "[pre-commit] All checks passed."
     exit 0
