@@ -10,5 +10,7 @@
     "oderwat.indent-rainbow",
     "cpmcgrath.codealignment-vscode",
     "naumovs.color-highlight",
+    "GitHub.copilot",
+    "GitHub.copilot-chat"
   ]
 }

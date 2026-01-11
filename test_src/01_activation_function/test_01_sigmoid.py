@@ -6,15 +6,23 @@ import importlib.util
 from pathlib import Path
 
 # 数字で始まるディレクトリ名によるインポートエラーを避けるため、importlib を使用して動的に読み込む
-current_file = Path(__file__).resolve()
-target_path = current_file.parents[2] / "01_question" / "01_activation_function" / "01_sigmoid.py"
+# current_file = Path(__file__).resolve()
+# target_path = current_file.parents[2] / "01_question" / "01_activation_function" / "01_sigmoid.py"
 
-spec = importlib.util.spec_from_file_location("sigmoid_module", target_path)
-sigmoid_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(sigmoid_module)
+# spec = importlib.util.spec_from_file_location("sigmoid_module", target_path)
+# sigmoid_module = importlib.util.module_from_spec(spec)
+# spec.loader.exec_module(sigmoid_module)
 
-sigmoid_forward = sigmoid_module.sigmoid_forward
-sigmoid_backward = sigmoid_module.sigmoid_backward
+# sigmoid_forward = sigmoid_module.sigmoid_forward
+# sigmoid_backward = sigmoid_module.sigmoid_backward
+
+# ノートブック実行時には、notebook_runner.py によってこれらの関数は動的に上書きされます。
+# 単体テストとして実行する場合やフォールバックのためにダミー定義を置きます。
+def sigmoid_forward(x: np.ndarray) -> np.ndarray:
+    return None
+
+def sigmoid_backward(x: np.ndarray, grad_output: np.ndarray) -> np.ndarray:
+    return None
 
 # ---------------------------------------
 # Forward の値一致確認
